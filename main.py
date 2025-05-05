@@ -58,18 +58,22 @@ def make_zipf_plot(counts, out_png="zipf_plot.png"):
 
     # plotting
     sns.set_theme(style="whitegrid", context="talk")
-    ax = sns.scatterplot(data=df, x="rank", y="freq", s=20, linewidth=0)
-
+    
+    # Create the plot with the line first (to put it in the background)
+    fig, ax = plt.subplots()
     x_fit = np.linspace(df["rank"].min(), df["rank"].max(), 200)
     y_fit = 10 ** (intercept + slope * np.log10(x_fit))
-    sns.lineplot(x=x_fit, y=y_fit, ax=ax,
-                 label=f"fit: freq ≈ {10**intercept:.2f}·rank^{slope:.2f}")
+    plt.plot(x_fit, y_fit, color='black', linestyle='--', linewidth=0.8,
+             label=f"y = {10**intercept:.2f} * x^{exponent:.2f}")
+    
+    # Add points with smaller size and specific color
+    sns.scatterplot(data=df, x="rank", y="freq", s=10, linewidth=0, color="#00bbf9", ax=ax)
 
     ax.set_xscale("log")
     ax.set_yscale("log")
-    ax.set_xlabel("Rank (log scale)")
-    ax.set_ylabel("Frequency (log scale)")
-    ax.set_title("Zipf plot of Logseq page links")
+    ax.set_xlabel("Rank")
+    ax.set_ylabel("Frequency")
+    ax.set_title("Zipf's plot of Logseq page links")
     plt.tight_layout()
     plt.savefig(out_png, dpi=300)
 

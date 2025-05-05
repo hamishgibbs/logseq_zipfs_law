@@ -63,11 +63,17 @@ def make_zipf_plot(counts, out_png="zipf_plot.png"):
     fig, ax = plt.subplots()
     x_fit = np.linspace(df["rank"].min(), df["rank"].max(), 200)
     y_fit = 10 ** (intercept + slope * np.log10(x_fit))
-    plt.plot(x_fit, y_fit, color='black', linestyle='--', linewidth=0.8,
-             label=f"y = {10**intercept:.2f} * x^{exponent:.2f}")
+    line = plt.plot(x_fit, y_fit, color='black', linestyle='--', linewidth=0.8,
+             label=r"$f(r) = {:.2f} \cdot r^{{{:.2f}}}$".format(10**intercept, -slope))
     
     # Add points with smaller size and specific color
-    sns.scatterplot(data=df, x="rank", y="freq", s=10, linewidth=0, color="#00bbf9", ax=ax)
+    sns.scatterplot(data=df, x="rank", y="freq", s=9, linewidth=0, color="#00bbf9", ax=ax)
+    
+    # Create legend with only the equation text (no line)
+    from matplotlib.lines import Line2D
+    legend_elements = [Line2D([0], [0], marker='', linestyle='none', 
+                             label=r"$f(r) = {:.2f} \cdot r^{{{:.2f}}}$".format(10**intercept, -slope))]
+    ax.legend(handles=legend_elements)
 
     ax.set_xscale("log")
     ax.set_yscale("log")
